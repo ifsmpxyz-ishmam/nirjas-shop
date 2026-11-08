@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My orders | Nirjas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Hanken+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shop.css">
+<link rel="stylesheet" href="order.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="shop.html">Nirjas</a>
+  <span></span>
+  <div class="acct">
+    <a href="login.html" id="auth-link">Log in</a>
+    <a href="cart.html" class="cartlink" id="cart-count">Cart (0)</a>
+  </div>
+</header>
+
+<main class="wrap orders-wrap">
+  <h2>My orders</h2>
+
+  <div id="order-filters" class="filters" hidden>
+    <button type="button" class="chip on" data-filter="all" aria-pressed="true">All</button>
+    <button type="button" class="chip" data-filter="active" aria-pressed="false">Active</button>
+    <button type="button" class="chip" data-filter="delivered" aria-pressed="false">Delivered</button>
+    <button type="button" class="chip" data-filter="cancelled" aria-pressed="false">Cancelled</button>
+  </div>
+
+  <p id="orders-state">Loading your orders...</p>
+
+  <div id="orders-empty" hidden>
+    <p>You have no orders yet.</p>
+    <a class="btn-link" href="shop.html">Start shopping</a>
+  </div>
+
+  <div id="orders"></div>
+</main>
+<footer id="about">
+  <div class="f-grid">
+    <div class="f-brand">
+      <p class="f-logo">Nirjas</p>
+      <p>Skincare made for Bangladesh's heat and humidity.</p>
+    </div>
+    <div>
+      <h4>Shop</h4>
+      <a href="shop.html">All products</a>
+      <a href="cart.html">Your cart</a>
+    </div>
+    <div>
+      <h4>Help</h4>
+      <a href="#">Delivery information</a>
+      <a href="#">Returns and refunds</a>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <p>Chattogram, Bangladesh</p>
+      <p>hello@example.com</p>
+    </div>
+  </div>
+  <div class="f-bottom">
+    <p>Pay with bKash, Nagad, cards and cash on delivery.</p>
+    <p>&copy; 2026 Nirjas. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="auth.js"></script>
+<script src="my-orders.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order status | Nirjas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Hanken+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shop.css">
+<link rel="stylesheet" href="cart.css">
+<style>
+.result{max-width:560px;margin:40px auto 80px;padding:32px;background:var(--white);border:2px solid var(--ink);box-shadow:8px 8px 0 var(--ink);text-align:center}
+.result h2{margin-bottom:12px}
+.result p{margin-bottom:10px}
+.result .tran{font-weight:700;word-break:break-all}
+.result a.btn{display:inline-block;margin-top:14px;padding:11px 20px;background:var(--ink);color:var(--white);font-weight:700;border:2px solid var(--ink)}
+.result a.btn:hover{background:var(--white);color:var(--ink)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="shop.html">Nirjas</a>
+  <span></span>
+  <div class="acct">
+    <a href="cart.html" class="cartlink" id="cart-count">Cart (0)</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="result">
+    <h2 id="r-title"></h2>
+    <p id="r-text"></p>
+    <p class="tran" id="r-tran"></p>
+    <a class="btn" id="r-btn" href="shop.html">Continue shopping</a>
+  </div>
+</main>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const status = params.get('status');
+const tran = params.get('tran');
+
+
+  const messages = {
+  placed:    ['Order placed', 'Thank you! We received your order. Please keep the payment ready for delivery.'],
+  paid:      ['Payment received', 'Thank you! Your order is confirmed and we will deliver it soon.'],
+  failed:    ['Payment failed', 'Your payment did not go through. Your cart is still saved, so you can try again.'],
+  cancelled: ['Payment cancelled', 'You cancelled the payment. Your cart is still saved.'],
+  error:     ['We could not confirm your payment', 'If money was deducted, please contact us with your order number.']
+};
+
+const info = messages[status] || messages.error;
+
+document.getElementById('r-title').textContent = info[0];
+document.getElementById('r-text').textContent = info[1];
+if (tran) {
+  document.getElementById('r-tran').textContent = 'Order number: ' + tran;
+}
+
+// শুধু পেমেন্ট সফল হলে কার্ট খালি করি
+if (status === 'paid' || status === 'placed') {
+  localStorage.removeItem('cart');
+}
+
+if (status === 'failed' || status === 'cancelled') {
+  const btn = document.getElementById('r-btn');
+  btn.href = 'cart.html';
+  btn.textContent = 'Back to cart';
+}
+
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem('cart')) || []; } catch (e) {}
+const count = cart.reduce((sum, item) => sum + item.qty, 0);
+document.getElementById('cart-count').textContent = 'Cart (' + count + ')';
+</script>
+</body>
+</html>
