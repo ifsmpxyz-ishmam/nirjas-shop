@@ -101,7 +101,7 @@ function renderProducts(list) {
 
     const price = document.createElement('span');
     price.className = 'price';
-    price.textContent = '৳ ' + Number(product.price).toLocaleString();
+    price.textContent = '$ ' + Number(product.price).toLocaleString();
 
     const button = document.createElement('button');
     button.classList.add('payment-btn');
