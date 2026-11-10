@@ -1,5 +1,4 @@
-// প্রতিটা পেজে লোড হবে (login.html ছাড়া)।
-// লগইন থাকলে হেডারে "Log in" এর জায়গায় অ্যাভাটার + নাম + ড্রপডাউন মেনু দেখায়।
+
 window.currentUser = null;
 
 function buildUserMenu(user) {
@@ -9,7 +8,7 @@ function buildUserMenu(user) {
   const wrap = document.createElement('div');
   wrap.className = 'user-menu';
 
-  // ---- বাটন: অ্যাভাটার + নাম + তীর ----
+ 
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = 'user-btn';
@@ -32,7 +31,6 @@ function buildUserMenu(user) {
   btn.appendChild(nameEl);
   btn.appendChild(caret);
 
-  // ---- ড্রপডাউন ----
   const menu = document.createElement('div');
   menu.className = 'user-dropdown';
   menu.setAttribute('role', 'menu');
@@ -74,7 +72,7 @@ function buildUserMenu(user) {
   wrap.appendChild(btn);
   wrap.appendChild(menu);
 
-  // ---- খোলা আর বন্ধ ----
+
   function setOpen(open) {
     menu.hidden = !open;
     btn.setAttribute('aria-expanded', String(open));
@@ -90,13 +88,13 @@ function buildUserMenu(user) {
     if (e.key === 'Escape') setOpen(false);
   });
 
-  // ---- লগআউট ----
+
   logout.addEventListener('click', async () => {
     logout.disabled = true;
     try {
       await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
     } catch (error) {
-      // নেটওয়ার্ক সমস্যা হলেও পেজ বদলাই
+     
     }
     window.location.href = 'shop.html';
   });
@@ -119,6 +117,5 @@ function buildUserMenu(user) {
     link.replaceWith(buildUserMenu(window.currentUser));
   }
 
-  // অন্য স্ক্রিপ্ট (যেমন checkout.js) জানতে পারে ইউজার তথ্য তৈরি
   document.dispatchEvent(new CustomEvent('auth-ready'));
 })();
