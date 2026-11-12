@@ -2,7 +2,7 @@
 
 A full-stack skincare shop built with plain HTML, CSS and vanilla JavaScript on the front end and Node.js, Express and PostgreSQL on the back end. It covers the whole buying flow: browse and search products, cart, checkout (guest or logged in), online payment through the SSLCommerz sandbox, and an order history with a delivery timeline.
 
-**Live demo:** _add your Render link here_
+**Live demo:** https://nirjas-shop.onrender.com
 
 > Payments run against the SSLCommerz **sandbox**. No real money moves.
 
@@ -146,6 +146,8 @@ The app is deployed as a Render web service connected to a Neon database.
 - Payment is confirmed when the customer returns to the site. Instant Payment Notification (IPN) would also cover customers who close the tab after paying.
 - No order emails, password reset, or stock tracking yet.
 - One currency for the whole shop.
+- **Admin**
+- Order dashboard: list all orders, search by order number, name, phone or email, filter by status, update order status
 
 ## Author
 
