@@ -197,3 +197,176 @@ searchInput.addEventListener('input', () => {
 });
 
 loadOrders();
+const STOCK_LOW = 5;
+const STOCK_MAX = 100000;
+
+const stockState = document.getElementById('stock-state');
+const stockList = document.getElementById('stock-list');
+const stockSearch = document.getElementById('stock-search');
+const lowOnly = document.getElementById('low-only');
+
+let allProducts = [];
+
+function showStockState(text) {
+  stockState.textContent = text;
+  stockState.hidden = !text;
+}
+
+function stockLevel(stock) {
+  if (stock <= 0) return { label: 'out of stock', badge: 'badge-cancelled' };
+  if (stock <= STOCK_LOW) return { label: 'low', badge: 'badge-pending' };
+  return { label: 'in stock', badge: 'badge-paid' };
+}
+
+function updateStockStats() {
+  document.getElementById('stat-products').textContent = allProducts.length;
+  document.getElementById('stat-low').textContent = allProducts.filter(p => p.stock > 0 && p.stock <= STOCK_LOW).length;
+  document.getElementById('stat-out').textContent = allProducts.filter(p => p.stock <= 0).length;
+}
+
+function buildStockRow(product) {
+  const row = document.createElement('article');
+  row.className = 'a-order';
+
+  const first = document.createElement('div');
+  first.appendChild(makeText('div', 'a-no', product.name));
+  first.appendChild(makeText('div', 'a-sub', product.category || ''));
+
+  const level = stockLevel(product.stock);
+  const second = document.createElement('div');
+  const badge = makeText('span', 'badge ' + level.badge, level.label);
+  second.appendChild(badge);
+
+  const current = makeText('div', 'a-total', String(product.stock));
+
+  const controls = document.createElement('div');
+  controls.className = 'a-controls';
+
+  const input = document.createElement('input');
+  input.type = 'number';
+  input.min = '0';
+  input.max = String(STOCK_MAX);
+  input.step = '1';
+  input.value = product.stock;
+  input.setAttribute('aria-label', 'New stock for ' + product.name);
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.textContent = 'Save';
+
+  const msg = document.createElement('div');
+  msg.className = 'a-msg';
+
+  function repaint() {
+    const next = stockLevel(product.stock);
+    badge.className = 'badge ' + next.badge;
+    badge.textContent = next.label;
+    current.textContent = String(product.stock);
+    input.value = product.stock;
+    updateStockStats();
+  }
+
+  button.addEventListener('click', async () => {
+    msg.className = 'a-msg';
+    msg.textContent = '';
+
+    const raw = input.value.trim();
+    const value = Number(raw);
+    if (raw === '' || !Number.isInteger(value) || value < 0 || value > STOCK_MAX) {
+      msg.className = 'a-msg error';
+      msg.textContent = 'Enter a whole number from 0 to ' + STOCK_MAX;
+      return;
+    }
+    if (value === product.stock) {
+      msg.textContent = 'No change';
+      return;
+    }
+
+    button.disabled = true;
+    try {
+      const response = await fetch('/api/admin/products/' + product.id + '/stock', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ stock: value })
+      });
+
+      if (response.status === 401) {
+        window.location.href = 'login.html?next=admin-orders.html';
+        return;
+      }
+      if (response.status === 403) {
+        msg.className = 'a-msg error';
+        msg.textContent = 'Admins only.';
+        return;
+      }
+      if (!response.ok) throw new Error('failed');
+
+      const data = await response.json();
+      product.stock = data.stock;
+      repaint();
+      msg.textContent = 'Saved';
+    } catch (error) {
+      console.error(error);
+      msg.className = 'a-msg error';
+      msg.textContent = 'Could not save. Try again.';
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') button.click();
+  });
+
+  controls.appendChild(input);
+  controls.appendChild(button);
+  controls.appendChild(msg);
+
+  row.appendChild(first);
+  row.appendChild(second);
+  row.appendChild(current);
+  row.appendChild(controls);
+  return row;
+}
+
+function renderStock() {
+  const text = stockSearch.value.trim().toLowerCase();
+
+  const shown = allProducts.filter(product => {
+    const haystack = (product.name + ' ' + (product.category || '')).toLowerCase();
+    const okLow = !lowOnly.checked || product.stock <= STOCK_LOW;
+    return okLow && haystack.includes(text);
+  });
+
+  updateStockStats();
+  stockList.innerHTML = '';
+
+  if (shown.length === 0) {
+    showStockState('No products found.');
+    return;
+  }
+
+  showStockState('');
+  shown.forEach(product => stockList.appendChild(buildStockRow(product)));
+}
+
+async function loadStock() {
+  try {
+    const response = await fetch('/api/products', { credentials: 'same-origin' });
+    if (!response.ok) {
+      showStockState('Could not load products.');
+      return;
+    }
+    allProducts = await response.json();
+    renderStock();
+  } catch (error) {
+    console.error(error);
+    showStockState('Could not load products.');
+  }
+}
+
+stockSearch.addEventListener('input', renderStock);
+lowOnly.addEventListener('change', renderStock);
+
+loadStock();
