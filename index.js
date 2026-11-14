@@ -349,6 +349,29 @@ app.get('/api/admin/orders', verifyToken, isAdmin, async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+app.patch('/api/admin/products/:id/stock', verifyToken, isAdmin, async (req, res) => {
+  const body = req.body || {};
+  const id = Number(req.params.id);
+  const stock = body.stock;
+
+  if (!Number.isInteger(id) || id <= 0 || !Number.isInteger(stock) || stock < 0 || stock > 10000) {
+    return res.status(400).json({ error: 'Invalid product ID or stock' });
+  }
+
+  try {
+    const result = await pool.query(
+      'UPDATE products SET stock = $1 WHERE id = $2 RETURNING id, name, stock',
+      [stock, id]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 app.use((error, req, res, next) => {
   if (error.type === 'entity.parse.failed') {
