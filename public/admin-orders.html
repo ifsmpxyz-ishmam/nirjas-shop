@@ -48,6 +48,24 @@
   <p id="admin-state">Loading orders...</p>
   <div id="admin-orders"></div>
 </main>
+<section class="stock-section" aria-labelledby="stock-title">
+  <h2 id="stock-title">Stock</h2>
+  <p class="admin-intro">Set the stock for each product. Customers cannot order more than what is in stock.</p>
+
+  <section class="admin-stats" aria-label="Stock summary">
+    <div class="stat"><b id="stat-products">0</b><span>Products</span></div>
+    <div class="stat"><b id="stat-low">0</b><span>Low stock</span></div>
+    <div class="stat"><b id="stat-out">0</b><span>Out of stock</span></div>
+  </section>
+
+  <div class="admin-bar">
+    <input type="search" id="stock-search" placeholder="Search by name or category" aria-label="Search products">
+    <label><input type="checkbox" id="low-only"> Low or out of stock only</label>
+  </div>
+
+  <p id="stock-state">Loading products...</p>
+  <div id="stock-list"></div>
+</section>
 
 <script src="admin.js"></script>
 </body>
