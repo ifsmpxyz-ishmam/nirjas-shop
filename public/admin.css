@@ -39,3 +39,9 @@
 @media(max-width:900px){.a-order{grid-template-columns:1fr 1fr}.a-controls,.a-msg{justify-content:flex-start;text-align:left}}
 @media(max-width:520px){.a-order{grid-template-columns:1fr}.a-order:hover{transform:none;box-shadow:none}}
 @media(prefers-reduced-motion:reduce){.a-order{transition:none}}
+.stock-section{margin-top:56px;padding-top:32px;border-top:2px solid var(--ink)}
+.a-controls input{font:inherit;font-weight:700;width:96px;padding:8px 10px;border:2px solid var(--ink);background:var(--white);color:var(--ink)}
+.admin-bar label{display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer}
+#stock-state{padding:28px 24px;text-align:center;border:2px dashed var(--ink);background:var(--white)}
+#stock-state[hidden]{display:none}
+#stock-list{display:flex;flex-direction:column;gap:14px}
